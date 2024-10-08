@@ -1,0 +1,35 @@
+services:
+  dynamodb:
+    image: amazon/dynamodb-local:2.5.2
+    ports:
+      - 8002:8000
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+  minio:
+    image: minio/minio:latest
+    ports:
+      - 9009:9000
+      - 9008:9001
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:4.5.1
+    ports:
+      - 8001:8001
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
+      - AWS_REGION=eu-west-1
+    depends_on:
+      - dynamodb
+volumes:
+  dynamodb-data:
+    driver: local
+  minio-data:
+    driver: local
