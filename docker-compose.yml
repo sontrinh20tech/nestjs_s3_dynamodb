@@ -5,7 +5,6 @@ services:
       - 8002:8000
     volumes:
       - dynamodb-data:/home/dynamodblocal/data
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
   minio:
     image: minio/minio:latest
     ports:
